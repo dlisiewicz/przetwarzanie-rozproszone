@@ -12,13 +12,13 @@ void *startKomWatek(void *ptr)
 	debug("czekam na recv");
         MPI_Recv( &pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-        if (pakiet.ts > local_clock) {
-            local_clock = pakiet.ts;
+        if (pakiet.timestamp > local_clock) {
+            local_clock = pakiet.timestamp;
         }
 
         switch ( status.MPI_TAG ) {
 	    case REQUEST: 
-                debug("Ktoś coś prosi. A niech ma!")
+                debug("%d o coś prosi. A niech ma!", status.MPI_SOURCE)
         local_clock++;
 		sendPacket( 0, status.MPI_SOURCE, ACK );
 	    break;

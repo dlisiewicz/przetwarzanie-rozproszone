@@ -17,6 +17,8 @@
 #define SEC_IN_STATE 1
 #define STATE_CHANGE_PROB 10
 
+#define DEBUG
+
 #define ROOT 0
 
 #define HOTELE 2 

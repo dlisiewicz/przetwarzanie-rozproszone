@@ -16,7 +16,7 @@ void mainLoop()
 		    println("Ubiegam się o sekcję krytyczną")
 		    debug("Zmieniam stan na wysyłanie");
 		    packet_t *pkt = malloc(sizeof(packet_t));
-		    pkt->data = perc;
+
 		    ackCount = 0;
 			local_clock++;
 		    for (int i=0;i<=size-1;i++)
@@ -43,7 +43,7 @@ void mainLoop()
 		    println("Wychodzę z sekcji krytyczneh")
 		    debug("Zmieniam stan na wysyłanie");
 		    packet_t *pkt = malloc(sizeof(packet_t));
-		    pkt->data = perc;
+
 		    for (int i=0;i<=size-1;i++)
 			if (i!=rank)
 			    sendPacket( pkt, (rank+1)%size, RELEASE);

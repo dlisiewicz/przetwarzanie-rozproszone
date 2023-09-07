@@ -4,19 +4,15 @@
 
 /* typ pakietu */
 typedef struct {
-    int ts;       /* timestamp (zegar lamporta */
-    int src;  
-    int data;     /* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą */
+    int timestamp;       /* zegar lamporta */
+    int source_rank;  
+    int type;
+    int target;
 } packet_t;
 /* packet_t ma trzy pola, więc NITEMS=3. Wykorzystane w inicjuj_typ_pakietu */
 
-typedef struct {
-    int id;
-    int ts;
-    struct list_element* next;
-} list_element;
 
-#define NITEMS 3
+#define NITEMS 4
 
 /* Typy wiadomości */
 /* TYPY PAKIETÓW */
