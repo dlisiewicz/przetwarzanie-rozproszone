@@ -18,14 +18,20 @@ void *startKomWatek(void *ptr)
 
         switch ( status.MPI_TAG ) {
 	    case REQUEST: 
-                debug("%d o coś prosi. A niech ma!", status.MPI_SOURCE)
-        local_clock++;
-		sendPacket( 0, status.MPI_SOURCE, ACK );
+            debug("Wysyłam ACK do %d", status.MPI_SOURCE)
+
+            sem_wait(&local_clock_semaphore);
+            local_clock++;
+            sem_post(&local_clock_semaphore);
+            
+            sendPacket( 0, status.MPI_SOURCE, ACK );
 	    break;
+
 	    case ACK: 
-                debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
+            debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
 	        ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie? Zastanówcie się. */
 	    break;
+
 	    default:
 	    break;
         }

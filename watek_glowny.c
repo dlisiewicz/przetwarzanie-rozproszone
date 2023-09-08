@@ -18,7 +18,11 @@ void mainLoop()
 		    packet_t *pkt = malloc(sizeof(packet_t));
 
 		    ackCount = 0;
+			
+			sem_wait(&local_clock_semaphore);
 			local_clock++;
+			sem_post(&local_clock_semaphore);
+
 		    for (int i=0;i<=size-1;i++)
 			if (i!=rank)
 			    sendPacket( pkt, i, REQUEST);

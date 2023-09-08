@@ -42,16 +42,16 @@ void inicjuj_typ_pakietu()
        brzydzimy się czymś w rodzaju MPI_Send(&typ, sizeof(pakiet_t), MPI_BYTE....
     */
     /* sklejone z stackoverflow */
-    int       blocklengths[NITEMS] = {1,1,1,1};
+    int blocklengths[NITEMS] = {1,1,1,1};
     MPI_Datatype typy[NITEMS] = {MPI_INT, MPI_INT, MPI_INT, MPI_INT};
+    MPI_Aint offsets[NITEMS]; 
+    
+    offsets[0] = offsetof(packet_t, timestamp);
+    offsets[1] = offsetof(packet_t, source_rank);
+    offsets[2] = offsetof(packet_t, type);
+    offsets[3] = offsetof(packet_t, target);
 
-    MPI_Aint     offsetimestamp[NITEMS]; 
-    offsetimestamp[0] = offsetof(packet_t, timestamp);
-    offsetimestamp[1] = offsetof(packet_t, source_rank);
-    offsetimestamp[2] = offsetof(packet_t, type);
-    offsetimestamp[3] = offsetof(packet_t, target);
-
-    MPI_Type_create_struct(NITEMS, blocklengths, offsetimestamp, typy, &MPI_PAKIET_T);
+    MPI_Type_create_struct(NITEMS, blocklengths, offsets, typy, &MPI_PAKIET_T);
 
     MPI_Type_commit(&MPI_PAKIET_T);
 }
@@ -63,7 +63,9 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     if (pkt==0) { pkt = malloc(sizeof(packet_t)); freepkt=1;}
     
     pkt->source_rank = rank;
+    sem_wait(&local_clock_semaphore);
     pkt->timestamp = local_clock;
+    sem_post(&local_clock_semaphore);
 
     MPI_Send( pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d", tag2string( tag), destination);
