@@ -1,5 +1,6 @@
-#include "main.h"
 #include "watek_glowny.h"
+
+#include "main.h"
 
 void mainLoop()
 {
@@ -7,57 +8,65 @@ void mainLoop()
     int tag;
     int perc;
 
-    while (stan != InFinish) {
-	switch (stan) {
-	    case InRun: 
-		perc = random()%100;
-		if ( perc < 25 ) {
-		    debug("Perc: %d", perc);
-		    println("Ubiegam się o sekcję krytyczną")
-		    debug("Zmieniam stan na wysyłanie");
-		    packet_t *pkt = malloc(sizeof(packet_t));
+    while (stan != InFinish)
+    {
+        switch (stan)
+        {
+            case InRun:
+                perc = random() % 100;
+                if (perc < 25)
+                {
+                    debug("Perc: %d", perc);
+                    println("Ubiegam się o sekcję krytyczną") debug("Zmieniam stan na wysyłanie");
+                    packet_t* pkt = malloc(sizeof(packet_t));
 
-		    ackCount = 0;
-			
-			sem_wait(&local_clock_semaphore);
-			local_clock++;
-			sem_post(&local_clock_semaphore);
+                    ackCount = 0;
 
-		    for (int i=0;i<=size-1;i++)
-			if (i!=rank)
-			    sendPacket( pkt, i, REQUEST);
-		    changeState(InWant);
-		    free(pkt);
-		}
-		debug("Skończyłem myśleć");
-		break;
-	    case InWant:
-		println("Czekam na wejście do sekcji krytycznej")
-		// tutaj zapewne jakiś muteks albo zmienna warunkowa
-		// bo aktywne czekanie jest BUE
-		if ( ackCount == size - 1) 
-		    changeState(InSection);
-		break;
-	    case InSection:
-		// tutaj zapewne jakiś muteks albo zmienna warunkowa
-		println("Jestem w sekcji krytycznej")
-		    sleep(5);
-		//if ( perc < 25 ) {
-		    debug("Perc: %d", perc);
-		    println("Wychodzę z sekcji krytyczneh")
-		    debug("Zmieniam stan na wysyłanie");
-		    packet_t *pkt = malloc(sizeof(packet_t));
+                    sem_wait(&local_clock_semaphore);
+                    local_clock++;
+                    sem_post(&local_clock_semaphore);
 
-		    for (int i=0;i<=size-1;i++)
-			if (i!=rank)
-			    sendPacket( pkt, (rank+1)%size, RELEASE);
-		    changeState( InRun );
-		    free(pkt);
-		//}
-		break;
-	    default: 
-		break;
-            }
+                    for (int i = 0; i <= size - 1; i++) {
+                        if (i != rank) {
+                            sendPacket(pkt, i, REQUEST);
+                        }
+                    } 
+                    changeState(InWant);
+                    free(pkt);
+                }
+                debug("Skończyłem myśleć");
+                break;
+
+            case InWant:
+                println("Czekam na wejście do sekcji krytycznej")
+                    // tutaj zapewne jakiś muteks albo zmienna warunkowa
+                    // bo aktywne czekanie jest BUE
+                    if (ackCount == size - 1) {
+                        changeState(InSection);
+                    } 
+                break;
+
+            case InSection:
+                // tutaj zapewne jakiś muteks albo zmienna warunkowa
+                println("Jestem w sekcji krytycznej") sleep(5);
+                // if ( perc < 25 ) {
+                debug("Perc: %d", perc);
+                println("Wychodzę z sekcji krytyczneh") debug("Zmieniam stan na wysyłanie");
+                packet_t* pkt = malloc(sizeof(packet_t));
+
+                for (int i = 0; i <= size - 1; i++) {
+                    if (i != rank) {
+                        sendPacket(pkt, (rank + 1) % size, RELEASE);
+                    }
+                }
+                changeState(InRun);
+                free(pkt);
+                //}
+                break;
+
+            default:
+                break;
+        } 
         sleep(SEC_IN_STATE);
     }
 }

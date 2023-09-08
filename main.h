@@ -1,15 +1,15 @@
 #ifndef MAINH
 #define MAINH
+
 #include <mpi.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <string.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "util.h"
-
 
 /* boolean */
 #define TRUE 1
@@ -21,8 +21,8 @@
 
 #define ROOT 0
 
-#define HOTELE 2 
-#define MIEJSCA 2 
+#define HOTELE 2
+#define MIEJSCA 2
 #define NIEBIESCY 2
 #define FIOLETOWI 2
 #define SPRZATACZE 2
@@ -36,7 +36,6 @@ extern int local_clock;
 extern sem_t local_clock_semaphore;
 extern pthread_t threadKom;
 
-
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta
 
@@ -45,22 +44,26 @@ extern pthread_t threadKom;
 
    w związku z tym, zmienna "rank" musi istnieć.
 
-   w printfie: definicja znaku specjalnego "%c[%d;%dm [%d]" escape[styl bold/normal;kolor [RANK]
-                                           FORMAT:argumenty doklejone z wywołania debug poprzez __VA_ARGS__
-                       "%c[%d;%dm"       wyczyszczenie atrybutów    27,0,37
-                                            UWAGA:
-                                                27 == kod ascii escape.
-                                                Pierwsze %c[%d;%dm ( np 27[1;10m ) definiuje styl i kolor literek
-                                                Drugie   %c[%d;%dm czyli 27[0;37m przywraca domyślne kolory i brak pogrubienia (bolda)
-                                                ...  w definicji makra oznacza, że ma zmienną liczbę parametrów
+   w printfie: definicja znaku specjalnego "%c[%d;%dm [%d]" escape[styl
+   bold/normal;kolor [RANK] FORMAT:argumenty doklejone z wywołania debug poprzez
+   __VA_ARGS__
+                       "%c[%d;%dm"       wyczyszczenie
+   atrybutów    27,0,37 UWAGA: 27 == kod ascii escape. Pierwsze %c[%d;%dm ( np
+   27[1;10m ) definiuje styl i kolor literek Drugie   %c[%d;%dm czyli 27[0;37m
+   przywraca domyślne kolory i brak pogrubienia (bolda) ...  w definicji makra
+   oznacza, że ma zmienną liczbę parametrów
 
 */
 #ifdef DEBUG
-#define debug(FORMAT, ...) printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, 0, 37);
+#define debug(FORMAT, ...)                                                                                                               \
+printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, \
+         0, 37);
 #else
 #define debug(...) ;
 #endif
 
 // makro println - to samo co debug, ale wyświetla się zawsze
-#define println(FORMAT, ...) printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, 0, 37);
+#define println(FORMAT, ...)                                                                                                               \
+  printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, \
+         0, 37);
 #endif
