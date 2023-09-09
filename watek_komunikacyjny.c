@@ -20,6 +20,8 @@ void* startKomWatek(void* ptr)
 
         switch (status.MPI_TAG) {
             case REQUEST:
+                handleRequest(pakiet);
+                
                 debug("Wysyłam ACK do %d", status.MPI_SOURCE)
                 
                 sem_wait(&local_clock_semaphore);

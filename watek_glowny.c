@@ -22,15 +22,22 @@ void mainLoop()
 
                     ackCount = 0;
 
+                    pkt->source_rank = rank;
                     sem_wait(&local_clock_semaphore);
                     local_clock++;
+                    pkt->timestamp = local_clock;
                     sem_post(&local_clock_semaphore);
 
                     for (int i = 0; i <= size - 1; i++) {
                         if (i != rank) {
                             sendPacket(pkt, i, REQUEST);
                         }
-                    } 
+                    }
+                    insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target); //type i target do zmiany
+
+                    sortList(&queueHead);
+                    printList(queueHead);
+
                     changeState(InWant);
                     free(pkt);
                 }

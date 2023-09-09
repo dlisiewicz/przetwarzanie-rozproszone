@@ -10,7 +10,14 @@ typedef struct {
     int type;
     int target;
 } packet_t;
-/* packet_t ma trzy pola, więc NITEMS=3. Wykorzystane w inicjuj_typ_pakietu */
+
+struct list_element{
+    int timestamp;
+    int source_rank;
+    int type;
+    int target;
+    struct list_element *next;
+};
 
 #define NITEMS 4
 
@@ -41,4 +48,9 @@ extern state_t stan;
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
+void handleRequest(packet_t);
+void sortList(struct list_element** queueHead);
+void insertNode(struct list_element** queueHead, int timestamp, int source_rank, int type, int target);
+void removeNode(struct list_element** queueHead, int source_rank);
+void printList(struct list_element* queueHead);
 #endif

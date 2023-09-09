@@ -33,6 +33,7 @@ extern int rank;
 extern int size;
 extern int ackCount;
 extern int local_clock;
+extern struct list_element *queueHead;
 extern sem_t local_clock_semaphore;
 extern pthread_t threadKom;
 

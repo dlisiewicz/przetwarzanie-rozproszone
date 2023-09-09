@@ -67,10 +67,7 @@ void sendPacket(packet_t* pkt, int destination, int tag)
         pkt = malloc(sizeof(packet_t));
         freepkt = 1;
     }
-    pkt->source_rank = rank;
-    sem_wait(&local_clock_semaphore);
-    pkt->timestamp = local_clock;
-    sem_post(&local_clock_semaphore);
+    
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d", tag2string(tag), destination);
     if (freepkt) {
@@ -87,4 +84,116 @@ void changeState(state_t newState)
     }
     stan = newState;
     pthread_mutex_unlock(&stateMut);
+}
+void handleRequest(packet_t pakiet){
+    insertNode(&queueHead, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
+    sortList(&queueHead);
+    printList(queueHead);
+    return;
+}
+
+void sortList(struct list_element** queueHead) {
+    struct list_element* current;
+    struct list_element* next;
+    int swapped;
+
+    if (*queueHead == NULL) {
+        return;
+    }
+
+    do {
+        swapped = 0;
+        current = *queueHead;
+
+        while (current->next != NULL) {
+            next = current->next;
+
+            if (current->timestamp > next->timestamp) {
+                // Zamiana węzłów
+                if (current == *queueHead) {
+                    *queueHead = next;
+                } else {
+                    struct list_element* prev = *queueHead;
+                    while (prev->next != current) {
+                        prev = prev->next;
+                    }
+                    prev->next = next;
+                }
+                current->next = next->next;
+                next->next = current;
+                swapped = 1;
+            } else if (current->timestamp == next->timestamp && current->source_rank > next->source_rank) {
+                if (current == *queueHead) {
+                    *queueHead = next;
+                } else {
+                    struct list_element* prev = *queueHead;
+                    while (prev->next != current) {
+                        prev = prev->next;
+                    }
+                    prev->next = next;
+                }
+                current->next = next->next;
+                next->next = current;
+                swapped = 1;
+            }
+
+            current = next;
+        }
+    } while (swapped);
+}
+
+void insertNode(struct list_element** queueHead, int timestamp, int source_rank, int type, int target) {
+    struct list_element* new_node = malloc(sizeof(struct list_element));
+    new_node->source_rank = source_rank;
+    new_node->timestamp = timestamp;
+    new_node->type = type;
+    new_node->target = target;
+    new_node->next = NULL;
+
+    if (*queueHead == NULL) {
+        *queueHead = new_node;
+    } else {
+        struct list_element* current = *queueHead;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+void removeNode(struct list_element** queueHead, int source_rank) {
+    if (*queueHead == NULL) {
+        return;
+    }
+
+    struct list_element* current = *queueHead;
+    struct list_element* prev = NULL;
+
+    if (current != NULL && current->source_rank == source_rank) {
+        *queueHead = current->next;
+        free(current);
+        return;
+    }
+
+    while (current != NULL && current->source_rank != source_rank) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        return;
+    }
+
+    prev->next = current->next;
+    free(current);
+}
+
+void printList(struct list_element* queueHead) {
+    debug("RANK: %d\n", rank);
+    struct list_element* current = queueHead;
+
+    while (current != NULL) {
+        debug("ID: %d, TS: %d\n", current->source_rank, current->timestamp);
+        current = current->next;
+    }
 }

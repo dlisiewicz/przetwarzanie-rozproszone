@@ -1,6 +1,5 @@
 /* w main.h także makra println oraz debug -  z kolorkami! */
 #include "main.h"
-
 #include "watek_glowny.h"
 #include "watek_komunikacyjny.h"
 
@@ -15,6 +14,7 @@
 int rank, size;
 int ackCount = 0;
 int local_clock = 0;
+struct list_element *queueHead = NULL;
 sem_t local_clock_semaphore;
 /*
  * Każdy proces ma dwa wątki - główny i komunikacyjny
