@@ -67,7 +67,10 @@ void sendPacket(packet_t* pkt, int destination, int tag)
         pkt = malloc(sizeof(packet_t));
         freepkt = 1;
     }
-    
+
+    pkt->source_rank = rank;
+    pkt->timestamp = local_clock;
+
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d", tag2string(tag), destination);
     if (freepkt) {
@@ -189,11 +192,30 @@ void removeNode(struct list_element** queueHead, int source_rank) {
 }
 
 void printList(struct list_element* queueHead) {
-    debug("RANK: %d\n", rank);
+    debug("---------------")
+    debug("RANK: %d", rank);
+
     struct list_element* current = queueHead;
 
     while (current != NULL) {
-        debug("ID: %d, TS: %d\n", current->source_rank, current->timestamp);
+        debug("ID: %d, TS: %d", current->source_rank, current->timestamp);
         current = current->next;
     }
+    debug("---------------")
+}
+
+int isElementAmongFirst(struct list_element* head, int source_rank, int x) {
+    struct list_element* current = head;
+    int count = 0;
+    
+    while (current != NULL && count < x) {
+        if (current->source_rank == source_rank) {
+            return 1;
+        }
+
+        current = current->next;
+        count++;
+    }
+
+    return 0;
 }

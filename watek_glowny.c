@@ -16,25 +16,24 @@ void mainLoop()
                 perc = random() % 100;
                 if (perc < 25)
                 {
-                    debug("Perc: %d", perc);
-                    println("Ubiegam się o sekcję krytyczną") debug("Zmieniam stan na wysyłanie");
+                    //debug("Perc: %d", perc);
+                    println("Ubiegam się o sekcję krytyczną") 
+                    //debug("Zmieniam stan na wysyłanie");
                     packet_t* pkt = malloc(sizeof(packet_t));
 
                     ackCount = 0;
 
-                    pkt->source_rank = rank;
                     sem_wait(&local_clock_semaphore);
                     local_clock++;
-                    pkt->timestamp = local_clock;
-                    sem_post(&local_clock_semaphore);
-
                     for (int i = 0; i <= size - 1; i++) {
                         if (i != rank) {
                             sendPacket(pkt, i, REQUEST);
                         }
                     }
-                    insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target); //type i target do zmiany
+                    sem_post(&local_clock_semaphore);
 
+
+                    insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target); //type i target do zmiany
                     sortList(&queueHead);
                     printList(queueHead);
 
@@ -46,16 +45,21 @@ void mainLoop()
 
             case InWant:
                 println("Czekam na wejście do sekcji krytycznej")
+                sleep(1);
                     // tutaj zapewne jakiś muteks albo zmienna warunkowa
                     // bo aktywne czekanie jest BUE
                     if (ackCount == size - 1) {
-                        changeState(InSection);
+                        if(isElementAmongFirst(queueHead, rank, MIEJSCA)){
+                            changeState(InSection);
+                        }
+
                     } 
                 break;
 
             case InSection:
                 // tutaj zapewne jakiś muteks albo zmienna warunkowa
-                println("Jestem w sekcji krytycznej") sleep(5);
+                println("Jestem w sekcji krytycznej") 
+                sleep(5);
                 // if ( perc < 25 ) {
                 debug("Perc: %d", perc);
                 println("Wychodzę z sekcji krytyczneh") debug("Zmieniam stan na wysyłanie");
@@ -63,9 +67,11 @@ void mainLoop()
 
                 for (int i = 0; i <= size - 1; i++) {
                     if (i != rank) {
-                        sendPacket(pkt, (rank + 1) % size, RELEASE);
+                        sendPacket(pkt, i, RELEASE);
                     }
                 }
+                ackCount = 0;
+                removeNode(&queueHead, rank);
                 changeState(InRun);
                 free(pkt);
                 //}

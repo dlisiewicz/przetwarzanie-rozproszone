@@ -20,9 +20,8 @@ void* startKomWatek(void* ptr)
 
         switch (status.MPI_TAG) {
             case REQUEST:
+                debug("Dosałem REQ od %d", status.MPI_SOURCE)
                 handleRequest(pakiet);
-                
-                debug("Wysyłam ACK do %d", status.MPI_SOURCE)
                 
                 sem_wait(&local_clock_semaphore);
                 local_clock++;
@@ -36,7 +35,10 @@ void* startKomWatek(void* ptr)
                 ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie?
                                 Zastanówcie się. */
                 break;
-
+            case RELEASE:
+                debug("Dostałem RELEASE od %d", status.MPI_SOURCE);
+                removeNode(&queueHead, status.MPI_SOURCE);
+                break;
             default:
                 break;
         }
