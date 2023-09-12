@@ -45,15 +45,14 @@ void mainLoop()
 
             case InWant:
                 println("Czekam na wejście do sekcji krytycznej")
-                sleep(1);
                     // tutaj zapewne jakiś muteks albo zmienna warunkowa
                     // bo aktywne czekanie jest BUE
-                    if (ackCount == size - 1) {
-                        if(isElementAmongFirst(queueHead, rank, MIEJSCA)){
-                            changeState(InSection);
-                        }
-
-                    } 
+                pthread_mutex_lock(&mutex);
+                while (!(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA))) {
+                    pthread_cond_wait(&condition, &mutex);
+                } 
+                pthread_mutex_unlock(&mutex);
+                changeState(InSection);
                 break;
 
             case InSection:
@@ -62,7 +61,7 @@ void mainLoop()
                 sleep(5);
                 // if ( perc < 25 ) {
                 debug("Perc: %d", perc);
-                println("Wychodzę z sekcji krytyczneh") debug("Zmieniam stan na wysyłanie");
+                println("Wychodzę z sekcji krytycznej") debug("Zmieniam stan na wysyłanie");
                 packet_t* pkt = malloc(sizeof(packet_t));
 
                 for (int i = 0; i <= size - 1; i++) {

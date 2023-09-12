@@ -15,6 +15,8 @@ int rank, size;
 int ackCount = 0;
 int local_clock = 0;
 struct list_element *queueHead = NULL;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
 sem_t local_clock_semaphore;
 /*
  * Każdy proces ma dwa wątki - główny i komunikacyjny

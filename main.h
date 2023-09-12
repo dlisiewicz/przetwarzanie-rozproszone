@@ -18,6 +18,7 @@
 #define STATE_CHANGE_PROB 10
 
 
+
 #define ROOT 0
 
 #define HOTELE 2
@@ -33,6 +34,8 @@ extern int size;
 extern int ackCount;
 extern int local_clock;
 extern struct list_element *queueHead;
+extern pthread_mutex_t mutex;
+extern pthread_cond_t condition;
 extern sem_t local_clock_semaphore;
 extern pthread_t threadKom;
 

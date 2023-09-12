@@ -34,10 +34,16 @@ void* startKomWatek(void* ptr)
                 debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
                 ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie?
                                 Zastanówcie się. */
+                if(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA)) {
+                    pthread_cond_signal(&condition);
+                }         
                 break;
             case RELEASE:
                 debug("Dostałem RELEASE od %d", status.MPI_SOURCE);
                 removeNode(&queueHead, status.MPI_SOURCE);
+                if(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA)) {
+                    pthread_cond_signal(&condition);
+                }
                 break;
             default:
                 break;
