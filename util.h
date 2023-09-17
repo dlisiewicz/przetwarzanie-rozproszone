@@ -53,5 +53,5 @@ void sortList(struct list_element** queueHead);
 void insertNode(struct list_element** queueHead, int timestamp, int source_rank, int type, int target);
 void removeNode(struct list_element** queueHead, int source_rank);
 void printList(struct list_element* queueHead);
-int isElementAmongFirst(struct list_element* head, int source_rank, int x);
+int isElementAmongFirst(struct list_element* head, int source_rank, int x, int target);
 #endif

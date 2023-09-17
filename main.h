@@ -17,16 +17,13 @@
 #define SEC_IN_STATE 1
 #define STATE_CHANGE_PROB 10
 
-
-
 #define ROOT 0
 
 #define HOTELE 2
-#define MIEJSCA 4
+#define MIEJSCA 2
 #define NIEBIESCY 4
 #define FIOLETOWI 4
-#define SPRZATACZE 2
-#define PRZEWODNICY 2
+
 
 #define NIEBIESKI 0
 #define FIOLETOWY 1
@@ -36,12 +33,15 @@ extern int rank;
 extern int size;
 extern int ackCount;
 extern int local_clock;
+extern int type;
+extern int target;
+extern char type_array[2][10];
 extern struct list_element *queueHead;
 extern pthread_mutex_t mutex;
 extern pthread_cond_t condition;
 extern sem_t local_clock_semaphore;
 extern pthread_t threadKom;
-extern int type;
+
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta
@@ -63,7 +63,7 @@ extern int type;
 */
 #ifdef DEBUG
 #define debug(FORMAT, ...)                                                                                                               \
-printf("%c[%d;%dm [%d][%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type, local_clock, ##__VA_ARGS__, 27, \
+printf("%c[%d;%dm [%d][%s][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type_array[type], local_clock, ##__VA_ARGS__, 27, \
          0, 37);
 #else
 #define debug(...) ;
@@ -71,6 +71,6 @@ printf("%c[%d;%dm [%d][%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2
 
 // makro println - to samo co debug, ale wyświetla się zawsze
 #define println(FORMAT, ...)                                                                                                             \
-printf("%c[%d;%dm [%d][%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type, local_clock, ##__VA_ARGS__, 27, \
+printf("%c[%d;%dm [%d][%s][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type_array[type], local_clock, ##__VA_ARGS__, 27, \
          0, 37);
 #endif

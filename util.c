@@ -71,6 +71,7 @@ void sendPacket(packet_t* pkt, int destination, int tag)
     pkt->source_rank = rank;
     pkt->timestamp = local_clock;
     pkt->type = type;
+    pkt->target = target;
 
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d", tag2string(tag), destination);
@@ -198,23 +199,26 @@ void printList(struct list_element* queueHead) {
     struct list_element* current = queueHead;
 
     while (current != NULL) {
-        debug("ID: %d, TS: %d", current->source_rank, current->timestamp);
+        debug("Source: %d, ts: %d, type: %s, target: %d", current->source_rank, current->timestamp, type_array[current->type], current->target);
         current = current->next;
     }
     debug("---------------")
 }
 
-int isElementAmongFirst(struct list_element* head, int source_rank, int x) {
+int isElementAmongFirst(struct list_element* head, int source_rank, int n, int target) {
     struct list_element* current = head;
     int count = 0;
     
-    while (current != NULL && count < x) {
+    while (current != NULL && count < n) {
         if (current->source_rank == source_rank) {
             return 1;
         }
 
         current = current->next;
-        count++;
+        if(current != NULL && current->target == target) {
+            count++;
+        }
+
     }
 
     return 0;

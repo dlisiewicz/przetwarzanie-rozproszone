@@ -16,10 +16,10 @@ void mainLoop()
                 if (perc < 25)
                 {
                     //debug("Perc: %d", perc);
-                    println("Ubiegam się o sekcję krytyczną") 
-                    //debug("Zmieniam stan na wysyłanie");
-                    packet_t* pkt = malloc(sizeof(packet_t));
 
+                    target = random() % HOTELE;
+                    println("Ubiegam się o pokój w hotelu o id: %d", target) 
+                    packet_t* pkt = malloc(sizeof(packet_t));
                     ackCount = 0;
 
                     sem_wait(&local_clock_semaphore);
@@ -33,7 +33,7 @@ void mainLoop()
 
                     insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target); //type i target do zmiany
                     sortList(&queueHead);
-                    printList(queueHead);
+                    //printList(queueHead);
 
                     changeState(InWant);
                     free(pkt);
@@ -42,11 +42,9 @@ void mainLoop()
                 break;
 
             case InWant:
-                println("Czekam na wejście do sekcji krytycznej")
-                    // tutaj zapewne jakiś muteks albo zmienna warunkowa
-                    // bo aktywne czekanie jest BUE
+                println("Czekam na wejście do pokoju w hotelu o id: %d", target)
                 pthread_mutex_lock(&mutex);
-                while (!(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA))) {
+                while (!(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA, target))) {
                     pthread_cond_wait(&condition, &mutex);
                 } 
                 pthread_mutex_unlock(&mutex);
@@ -55,11 +53,16 @@ void mainLoop()
 
             case InSection:
                 // tutaj zapewne jakiś muteks albo zmienna warunkowa
-                println("Jestem w sekcji krytycznej") 
-                sleep(5);
+                debug("-----------------------------")
+                println("Jestem w hotelu o id: %d", target) 
+                debug("-----------------------------")
+                sleep(random() % 5);
                 // if ( perc < 25 ) {
-                debug("Perc: %d", perc);
-                println("Wychodzę z sekcji krytycznej") debug("Zmieniam stan na wysyłanie");
+                //debug("Perc: %d", perc);
+                debug("-----------------------------")
+                println("Wychodzę z hotelu o id: %d", target)
+                debug("-----------------------------")
+                //debug("Zmieniam stan na wysyłanie");
                 packet_t* pkt = malloc(sizeof(packet_t));
 
                 for (int i = 0; i <= size - 1; i++) {
@@ -67,7 +70,6 @@ void mainLoop()
                         sendPacket(pkt, i, RELEASE);
                     }
                 }
-                ackCount = 0;
                 removeNode(&queueHead, rank);
                 changeState(InRun);
                 free(pkt);

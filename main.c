@@ -15,6 +15,8 @@ int rank, size;
 int ackCount = 0;
 int local_clock = 0;
 int type = 0;
+int target = 0;
+char type_array[2][10] = {"Niebieski", "Fioletowy"};
 struct list_element *queueHead = NULL;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
@@ -78,8 +80,8 @@ int main(int argc, char** argv)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     if (size != NIEBIESCY + FIOLETOWI) {
-        printf("Liczba kosmitów niebieskich + fioletowych musi być równa liczbie procesów\n");
-        printf("Niebiescy: %d\n Fioletowi: %d\n Procesy: %d\n", NIEBIESCY, FIOLETOWI, size);
+        println("Liczba kosmitów niebieskich + fioletowych musi być równa liczbie procesów\n");
+        println("Niebiescy: %d\n Fioletowi: %d\n Procesy: %d\n", NIEBIESCY, FIOLETOWI, size);
         finalizuj();
     }
 
