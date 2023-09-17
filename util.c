@@ -70,6 +70,7 @@ void sendPacket(packet_t* pkt, int destination, int tag)
 
     pkt->source_rank = rank;
     pkt->timestamp = local_clock;
+    pkt->type = type;
 
     MPI_Send(pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     debug("Wysyłam %s do %d", tag2string(tag), destination);
@@ -112,7 +113,6 @@ void sortList(struct list_element** queueHead) {
             next = current->next;
 
             if (current->timestamp > next->timestamp) {
-                // Zamiana węzłów
                 if (current == *queueHead) {
                     *queueHead = next;
                 } else {

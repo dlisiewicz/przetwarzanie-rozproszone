@@ -14,6 +14,7 @@
 int rank, size;
 int ackCount = 0;
 int local_clock = 0;
+int type = 0;
 struct list_element *queueHead = NULL;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
@@ -75,7 +76,22 @@ int main(int argc, char** argv)
     inicjuj_typ_pakietu(); // tworzy typ pakietu
 
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    if (size != NIEBIESCY + FIOLETOWI) {
+        printf("Liczba kosmitów niebieskich + fioletowych musi być równa liczbie procesów\n");
+        printf("Niebiescy: %d\n Fioletowi: %d\n Procesy: %d\n", NIEBIESCY, FIOLETOWI, size);
+        finalizuj();
+    }
+
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if(rank<NIEBIESCY) {
+        type = NIEBIESKI;
+    }
+    else {
+        type = FIOLETOWY;
+    }
+
     /* startKomWatek w watek_komunikacyjny.c w vi najedź kursorem na nazwę pliku i
     wciśnij klawisze gf powrót po wciśnięciu ctrl+6 */
     pthread_create(&threadKom, NULL, startKomWatek, 0);

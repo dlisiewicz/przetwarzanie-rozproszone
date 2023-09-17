@@ -22,11 +22,14 @@
 #define ROOT 0
 
 #define HOTELE 2
-#define MIEJSCA 2
-#define NIEBIESCY 2
-#define FIOLETOWI 2
+#define MIEJSCA 4
+#define NIEBIESCY 4
+#define FIOLETOWI 4
 #define SPRZATACZE 2
 #define PRZEWODNICY 2
+
+#define NIEBIESKI 0
+#define FIOLETOWY 1
 
 /* tutaj TYLKO zapowiedzi - definicje w main.c */
 extern int rank;
@@ -38,6 +41,7 @@ extern pthread_mutex_t mutex;
 extern pthread_cond_t condition;
 extern sem_t local_clock_semaphore;
 extern pthread_t threadKom;
+extern int type;
 
 /* macro debug - działa jak printf, kiedy zdefiniowano
    DEBUG, kiedy DEBUG niezdefiniowane działa jak instrukcja pusta
@@ -59,14 +63,14 @@ extern pthread_t threadKom;
 */
 #ifdef DEBUG
 #define debug(FORMAT, ...)                                                                                                               \
-printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, \
+printf("%c[%d;%dm [%d][%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type, local_clock, ##__VA_ARGS__, 27, \
          0, 37);
 #else
 #define debug(...) ;
 #endif
 
 // makro println - to samo co debug, ale wyświetla się zawsze
-#define println(FORMAT, ...)                                                                                                               \
-  printf("%c[%d;%dm [%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, local_clock, ##__VA_ARGS__, 27, \
+#define println(FORMAT, ...)                                                                                                             \
+printf("%c[%d;%dm [%d][%d][%d]: " FORMAT "%c[%d;%dm\n", 27, (1 + (rank / 7)) % 2, 31 + (6 + rank) % 7, rank, type, local_clock, ##__VA_ARGS__, 27, \
          0, 37);
 #endif

@@ -1,11 +1,10 @@
 #include "watek_glowny.h"
-
 #include "main.h"
 
 void mainLoop()
 {
+
     srandom(rank);
-    int tag;
     int perc;
 
     while (stan != InFinish)
@@ -31,7 +30,6 @@ void mainLoop()
                         }
                     }
                     sem_post(&local_clock_semaphore);
-
 
                     insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target); //type i target do zmiany
                     sortList(&queueHead);
