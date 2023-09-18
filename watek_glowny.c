@@ -44,7 +44,7 @@ void mainLoop()
             case InWant:
                 println("Czekam na wejście do pokoju w hotelu o id: %d", target)
                 pthread_mutex_lock(&mutex);
-                while (!(ackCount == size - 1 && isElementAmongFirst(queueHead, rank, MIEJSCA, target))) {
+                while (!(ackCount == size - 1 && isElementInNElements(queueHead, rank, MIEJSCA, type, target))) {
                     pthread_cond_wait(&condition, &mutex);
                 } 
                 pthread_mutex_unlock(&mutex);

@@ -205,10 +205,10 @@ void printList(struct list_element* queueHead) {
     debug("---------------")
 }
 
-int isElementAmongFirst(struct list_element* head, int source_rank, int n, int target) {
+int isElementInNElements(struct list_element* head, int source_rank, int n, int type, int target) {
     struct list_element* current = head;
     int count = 0;
-    
+
     while (current != NULL && count < n) {
         if (current->source_rank == source_rank) {
             return 1;
@@ -217,6 +217,9 @@ int isElementAmongFirst(struct list_element* head, int source_rank, int n, int t
         current = current->next;
         if(current != NULL && current->target == target) {
             count++;
+            if(current->type != type) {
+                return 0;
+            }
         }
 
     }
