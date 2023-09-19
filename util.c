@@ -210,6 +210,10 @@ int isElementInNElements(struct list_element* head, int source_rank, int n, int 
     int count = 0;
 
     while (current != NULL && count < n) {
+        if(current != NULL && current->target == target && current->type != type){
+            return 0;
+        }
+
         if (current->source_rank == source_rank) {
             return 1;
         }
@@ -217,9 +221,6 @@ int isElementInNElements(struct list_element* head, int source_rank, int n, int 
         current = current->next;
         if(current != NULL && current->target == target) {
             count++;
-            if(current->type != type) {
-                return 0;
-            }
         }
 
     }
