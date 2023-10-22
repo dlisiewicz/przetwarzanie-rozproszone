@@ -90,34 +90,34 @@ void changeState(state_t newState)
     stan = newState;
     pthread_mutex_unlock(&stateMut);
 }
-void handleRequest(packet_t pakiet){
-    insertNode(&queueHead, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
-    sortList(&queueHead);
-    printList(queueHead);
+void handleRequest(packet_t pakiet, struct list_element* head){
+    insertNode(&head, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
+    sortList(&head);
+    printList(head);
     return;
 }
 
-void sortList(struct list_element** queueHead) {
+void sortList(struct list_element** head) {
     struct list_element* current;
     struct list_element* next;
     int swapped;
 
-    if (*queueHead == NULL) {
+    if (*head == NULL) {
         return;
     }
 
     do {
         swapped = 0;
-        current = *queueHead;
+        current = *head;
 
         while (current->next != NULL) {
             next = current->next;
 
             if (current->timestamp > next->timestamp) {
-                if (current == *queueHead) {
-                    *queueHead = next;
+                if (current == *head) {
+                    *head = next;
                 } else {
-                    struct list_element* prev = *queueHead;
+                    struct list_element* prev = *head;
                     while (prev->next != current) {
                         prev = prev->next;
                     }
@@ -127,10 +127,10 @@ void sortList(struct list_element** queueHead) {
                 next->next = current;
                 swapped = 1;
             } else if (current->timestamp == next->timestamp && current->source_rank > next->source_rank) {
-                if (current == *queueHead) {
-                    *queueHead = next;
+                if (current == *head) {
+                    *head = next;
                 } else {
-                    struct list_element* prev = *queueHead;
+                    struct list_element* prev = *head;
                     while (prev->next != current) {
                         prev = prev->next;
                     }
@@ -146,7 +146,7 @@ void sortList(struct list_element** queueHead) {
     } while (swapped);
 }
 
-void insertNode(struct list_element** queueHead, int timestamp, int source_rank, int type, int target) {
+void insertNode(struct list_element** head, int timestamp, int source_rank, int type, int target) {
     struct list_element* new_node = malloc(sizeof(struct list_element));
     new_node->source_rank = source_rank;
     new_node->timestamp = timestamp;
@@ -154,10 +154,10 @@ void insertNode(struct list_element** queueHead, int timestamp, int source_rank,
     new_node->target = target;
     new_node->next = NULL;
 
-    if (*queueHead == NULL) {
-        *queueHead = new_node;
+    if (*head == NULL) {
+        *head = new_node;
     } else {
-        struct list_element* current = *queueHead;
+        struct list_element* current = *head;
         while (current->next != NULL) {
             current = current->next;
         }
@@ -165,16 +165,16 @@ void insertNode(struct list_element** queueHead, int timestamp, int source_rank,
     }
 }
 
-void removeNode(struct list_element** queueHead, int source_rank) {
-    if (*queueHead == NULL) {
+void removeNode(struct list_element** head, int source_rank) {
+    if (*head == NULL) {
         return;
     }
 
-    struct list_element* current = *queueHead;
+    struct list_element* current = *head;
     struct list_element* prev = NULL;
 
     if (current != NULL && current->source_rank == source_rank) {
-        *queueHead = current->next;
+        *head = current->next;
         free(current);
         return;
     }
@@ -192,11 +192,11 @@ void removeNode(struct list_element** queueHead, int source_rank) {
     free(current);
 }
 
-void printList(struct list_element* queueHead) {
+void printList(struct list_element* head) {
     debug("---------------")
     debug("RANK: %d", rank);
 
-    struct list_element* current = queueHead;
+    struct list_element* current = head;
 
     while (current != NULL) {
         debug("Source: %d, ts: %d, type: %s, target: %d", current->source_rank, current->timestamp, type_array[current->type], current->target);

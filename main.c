@@ -16,8 +16,9 @@ int ackCount = 0;
 int local_clock = 0;
 int type = 0;
 int target = 0;
-char type_array[2][10] = {"Niebieski", "Fioletowy"};
+char type_array[3][10] = {"Niebieski", "Fioletowy", "Sprzątacz"};
 struct list_element *queueHead = NULL;
+struct list_element *guideQueueHead = NULL;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
 sem_t local_clock_semaphore;
@@ -79,9 +80,9 @@ int main(int argc, char** argv)
 
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    if (size != NIEBIESCY + FIOLETOWI) {
-        println("Liczba kosmitów niebieskich + fioletowych musi być równa liczbie procesów\n");
-        println("Niebiescy: %d\n Fioletowi: %d\n Procesy: %d\n", NIEBIESCY, FIOLETOWI, size);
+    if (size != NIEBIESCY + FIOLETOWI + SPRZATACZE) {
+        println("Liczba kosmitów niebieskich + fioletowych + sprzątaczy musi być równa liczbie procesów\n");
+        println("Niebiescy: %d\n Fioletowi: %d\n Sprzątacze: %d\n Procesy: %d\n", NIEBIESCY, FIOLETOWI, SPRZATACZE, size);
         finalizuj();
     }
 
@@ -90,8 +91,11 @@ int main(int argc, char** argv)
     if(rank<NIEBIESCY) {
         type = NIEBIESKI;
     }
-    else {
+    else if(rank >= NIEBIESCY && rank < NIEBIESCY + FIOLETOWI){
         type = FIOLETOWY;
+    }
+    else {
+        type = SPRZATACZ;
     }
 
     /* startKomWatek w watek_komunikacyjny.c w vi najedź kursorem na nazwę pliku i

@@ -21,12 +21,14 @@
 
 #define HOTELE 2
 #define MIEJSCA 2
-#define NIEBIESCY 4
-#define FIOLETOWI 4
-
+#define NIEBIESCY 3
+#define FIOLETOWI 3
+#define PRZEWODNICY 4
+#define SPRZATACZE 2
 
 #define NIEBIESKI 0
 #define FIOLETOWY 1
+#define SPRZATACZ 2
 
 /* tutaj TYLKO zapowiedzi - definicje w main.c */
 extern int rank;
@@ -35,8 +37,9 @@ extern int ackCount;
 extern int local_clock;
 extern int type;
 extern int target;
-extern char type_array[2][10];
+extern char type_array[3][10];
 extern struct list_element *queueHead;
+extern struct list_element *guideQueueHead;
 extern pthread_mutex_t mutex;
 extern pthread_cond_t condition;
 extern sem_t local_clock_semaphore;

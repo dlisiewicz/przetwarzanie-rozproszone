@@ -48,10 +48,10 @@ extern state_t stan;
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
-void handleRequest(packet_t);
-void sortList(struct list_element** queueHead);
-void insertNode(struct list_element** queueHead, int timestamp, int source_rank, int type, int target);
-void removeNode(struct list_element** queueHead, int source_rank);
-void printList(struct list_element* queueHead);
+void handleRequest(packet_t, struct list_element* head);
+void sortList(struct list_element** head);
+void insertNode(struct list_element** head, int timestamp, int source_rank, int type, int target);
+void removeNode(struct list_element** head, int source_rank);
+void printList(struct list_element* head);
 int isElementInNElements(struct list_element* head, int source_rank, int x, int type, int target);
 #endif
