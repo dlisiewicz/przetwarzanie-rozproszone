@@ -71,11 +71,14 @@ void mainLoop()
                     }
                 }
                 removeNode(&queueHead, rank);
-                changeState(InRun);
+                changeState(InWantGuide);
                 free(pkt);
                 //}
                 break;
-
+            case InWantGuide:
+                changeState(InRun);
+                free(pkt);
+                break;
             default:
                 break;
         } 

@@ -22,14 +22,12 @@ void* startKomWatek(void* ptr)
             case REQUEST:
                 debug("Dosałem REQ od %d", status.MPI_SOURCE)
                 handleRequest(pakiet, queueHead);
-                
-                sem_wait(&local_clock_semaphore);
-                local_clock++;
-                sem_post(&local_clock_semaphore);
-
                 sendPacket(0, status.MPI_SOURCE, ACK);
                 break;
-
+            case HOTEL_REQUEST:
+                debug("Dosałem HOTEL_REQUEST od %d", status.MPI_SOURCE)
+                handleRequest(pakiet, guideQueueHead);
+                break;
             case ACK:
                 debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
                 ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie?

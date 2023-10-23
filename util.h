@@ -28,6 +28,7 @@ struct list_element{
 #define RELEASE 3
 #define APP_PKT 4
 #define FINISH 5
+#define HOTEL_REQUEST 6
 
 extern MPI_Datatype MPI_PAKIET_T;
 void inicjuj_typ_pakietu();
@@ -41,7 +42,8 @@ typedef enum {
     InMonitor,
     InWant,
     InSection,
-    InFinish
+    InFinish,
+    InWantGuide
 } state_t;
 
 extern state_t stan;

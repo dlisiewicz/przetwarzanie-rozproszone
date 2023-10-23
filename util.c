@@ -26,7 +26,8 @@ tagNames[] = {{"pakiet aplikacyjny", APP_PKT},
               {"finish", FINISH},
               {"potwierdzenie", ACK},
               {"prośbę o sekcję krytyczną", REQUEST},
-              {"zwolnienie sekcji krytycznej", RELEASE}};
+              {"zwolnienie sekcji krytycznej", RELEASE},
+              {"prośbę o sekcję krytyczną", HOTEL_REQUEST}};
 
 const char const* tag2string(int tag)
 {

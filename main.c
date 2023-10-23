@@ -13,6 +13,7 @@
  */
 int rank, size;
 int ackCount = 0;
+int guideAckCount = 0;
 int local_clock = 0;
 int type = 0;
 int target = 0;

@@ -34,6 +34,7 @@
 extern int rank;
 extern int size;
 extern int ackCount;
+extern int guideAckCount;
 extern int local_clock;
 extern int type;
 extern int target;
