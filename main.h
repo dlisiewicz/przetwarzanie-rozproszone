@@ -23,7 +23,7 @@
 #define MIEJSCA 2
 #define NIEBIESCY 3
 #define FIOLETOWI 3
-#define PRZEWODNICY 4
+#define PRZEWODNICY 2
 #define SPRZATACZE 2
 
 #define NIEBIESKI 0

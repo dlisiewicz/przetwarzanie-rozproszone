@@ -21,27 +21,39 @@ void* startKomWatek(void* ptr)
         switch (status.MPI_TAG) {
             case REQUEST:
                 debug("Dosałem REQ od %d", status.MPI_SOURCE)
-                handleRequest(pakiet, queueHead);
+                handleRequest(pakiet);
                 sendPacket(0, status.MPI_SOURCE, ACK);
                 break;
-            case HOTEL_REQUEST:
-                debug("Dosałem HOTEL_REQUEST od %d", status.MPI_SOURCE)
-                handleRequest(pakiet, guideQueueHead);
+            case GUIDE_REQUEST:
+                debug("Dosałem GUIDE_REQUEST od %d", status.MPI_SOURCE)
+                handleGuideRequest(pakiet);
+                sendPacket(0, status.MPI_SOURCE, GUIDE_ACK);
                 break;
             case ACK:
                 debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
-                ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie?
-                                Zastanówcie się. */
+                ackCount++;
                 if(ackCount == size - 1 && isElementInNElements(queueHead, rank, MIEJSCA, type, target)) {
                     pthread_cond_signal(&condition);
-                }         
+                }     
+                break;
+            case GUIDE_ACK:
+                debug("Dostałem GUIDE_ACK od %d, mam już %d", status.MPI_SOURCE, guideAckCount);
+                guideAckCount++;
+                if (!(guideAckCount == size - 1 && isElementInNElements(guideQueueHead, rank, 1, type, target))) {
+                    pthread_cond_signal(&condition);
+                }
                 break;
             case RELEASE:
                 debug("Dostałem RELEASE od %d", status.MPI_SOURCE);
                 removeNode(&queueHead, status.MPI_SOURCE);
+                removeNode(&guideQueueHead, status.MPI_SOURCE);
+
                 if(ackCount == size - 1 && isElementInNElements(queueHead, rank, MIEJSCA, type, target)) {
                     pthread_cond_signal(&condition);
                 }
+                if (!(guideAckCount == size - 1 && isElementInNElements(guideQueueHead, rank, 1, type, target))) {
+                    pthread_cond_signal(&condition);
+                }   
                 break;
             default:
                 break;

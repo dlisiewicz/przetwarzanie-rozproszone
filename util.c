@@ -27,7 +27,8 @@ tagNames[] = {{"pakiet aplikacyjny", APP_PKT},
               {"potwierdzenie", ACK},
               {"prośbę o sekcję krytyczną", REQUEST},
               {"zwolnienie sekcji krytycznej", RELEASE},
-              {"prośbę o sekcję krytyczną", HOTEL_REQUEST}};
+              {"prośbę o sekcję krytyczną", GUIDE_REQUEST},
+              {"potwierdzenie", GUIDE_ACK}};
 
 const char const* tag2string(int tag)
 {
@@ -91,10 +92,16 @@ void changeState(state_t newState)
     stan = newState;
     pthread_mutex_unlock(&stateMut);
 }
-void handleRequest(packet_t pakiet, struct list_element* head){
-    insertNode(&head, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
-    sortList(&head);
-    printList(head);
+void handleRequest(packet_t pakiet){
+    insertNode(&queueHead, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
+    sortList(&queueHead);
+    printList(queueHead);
+    return;
+}
+void handleGuideRequest(packet_t pakiet){
+    insertNode(&guideQueueHead, pakiet.timestamp, pakiet.source_rank, pakiet.type, pakiet.target);
+    sortList(&guideQueueHead);
+    printList(guideQueueHead);
     return;
 }
 
