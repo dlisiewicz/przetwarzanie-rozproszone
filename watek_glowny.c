@@ -21,29 +21,27 @@ void mainLoop()
 
                     target = random() % HOTELE;
                     hotel_id = target;
+                    sem_wait(&local_clock_semaphore);
                     println("Ubiegam się o pokój w hotelu o id: %d", target) 
                     ackCount = 0;
                     guideAckCount = 0;
-                    sem_wait(&local_clock_semaphore);
                     local_clock++;
                     for (int i = 0; i <= size - 1; i++) {
                         if (i != rank) {
                             sendPacket(pkt, i, REQUEST);
                         }
                     }
-                    sem_post(&local_clock_semaphore);
-
                     insertNode(&queueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target);
                     sortList(&queueHead);
                     //printList(queueHead);
-
+                    sem_post(&local_clock_semaphore);
                     changeState(InWant);
                 }
                 debug("Skończyłem myśleć");
                 break;
             case InWant:
-                println("Czekam na wejście do pokoju w hotelu o id: %d", target)
                 pthread_mutex_lock(&mutex);
+                println("Czekam na wejście do pokoju w hotelu o id: %d", target)
                 while (!(ackCount == size - 1 && isElementInNElements(queueHead, rank, MIEJSCA, type, target))) {
                     pthread_cond_wait(&condition, &mutex);
                 } 
@@ -69,12 +67,13 @@ void mainLoop()
                         sendPacket(pkt, i, RELEASE);
                     }
                 }
+                sem_wait(&local_clock_semaphore);
                 removeNode(&queueHead, rank);
+                sem_post(&local_clock_semaphore);
                 changeState(InRun);
                 free(pkt);
                 break;
             case InSection:
-                // tutaj zapewne jakiś muteks albo zmienna warunkowa
                 debug("-----------------------------")
                 println("Jestem w hotelu o id: %d", target) 
                 debug("-----------------------------")
@@ -89,10 +88,9 @@ void mainLoop()
                         sendPacket(pkt, i, GUIDE_REQUEST);
                     }
                 }
-                sem_post(&local_clock_semaphore);
-
                 insertNode(&guideQueueHead, pkt->timestamp, pkt->source_rank, pkt->type, pkt->target);
                 sortList(&guideQueueHead);
+                sem_post(&local_clock_semaphore);
 
                 changeState(InWantGuide);
                 break;
@@ -114,8 +112,10 @@ void mainLoop()
                         sendPacket(pkt, i, RELEASE);
                     }
                 }
+                sem_wait(&local_clock_semaphore);
                 removeNode(&queueHead, rank);
                 removeNode(&guideQueueHead, rank);
+                sem_post(&local_clock_semaphore);
                 changeState(InRun);
                 free(pkt);
                 break;
