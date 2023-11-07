@@ -62,12 +62,13 @@ void mainLoop()
 
                 sleep(random() % 5);
                 println("Wychodzę z hotelu o id: %d", hotel_id)
+                sem_wait(&local_clock_semaphore);
+                local_clock++;
                 for (int i = 0; i <= size - 1; i++) {
                     if (i != rank) {
                         sendPacket(pkt, i, RELEASE);
                     }
                 }
-                sem_wait(&local_clock_semaphore);
                 removeNode(&queueHead, rank);
                 sem_post(&local_clock_semaphore);
                 changeState(InRun);
@@ -107,12 +108,13 @@ void mainLoop()
                 println("Idę z przewodnikiem o id: %d na wyprawę", target)
                 sleep(random() % 5);
                 println("Wróciłem z wyprawy, wychodzę z hotelu o id: %d", hotel_id)
+                sem_wait(&local_clock_semaphore);
+                local_clock++;
                 for (int i = 0; i <= size - 1; i++) {
                     if (i != rank) {
                         sendPacket(pkt, i, RELEASE);
                     }
                 }
-                sem_wait(&local_clock_semaphore);
                 removeNode(&queueHead, rank);
                 removeNode(&guideQueueHead, rank);
                 sem_post(&local_clock_semaphore);

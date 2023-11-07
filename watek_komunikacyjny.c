@@ -23,6 +23,7 @@ void* startKomWatek(void* ptr)
                 sem_wait(&local_clock_semaphore);
                 debug("Dosałem REQ od %d", status.MPI_SOURCE)
                 handleRequest(pakiet);
+                local_clock++;
                 sendPacket(0, status.MPI_SOURCE, ACK);
                 sem_post(&local_clock_semaphore);
                 break;
@@ -30,6 +31,7 @@ void* startKomWatek(void* ptr)
                 sem_wait(&local_clock_semaphore);
                 debug("Dosałem GUIDE_REQUEST od %d", status.MPI_SOURCE)
                 handleGuideRequest(pakiet);
+                local_clock++;
                 sendPacket(0, status.MPI_SOURCE, GUIDE_ACK);
                 sem_post(&local_clock_semaphore);
                 break;
