@@ -17,8 +17,6 @@ void mainLoop()
                 perc = random() % 100;
                 if (perc < 25)
                 {
-                    //debug("Perc: %d", perc);
-
                     target = random() % HOTELE;
                     hotel_id = target;
                     sem_wait(&local_clock_semaphore);

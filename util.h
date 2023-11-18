@@ -2,10 +2,8 @@
 #define UTILH
 #include "main.h"
 
-
-/* typ pakietu */
 typedef struct {
-    int timestamp; /* zegar lamporta */
+    int timestamp;
     int source_rank;
     int type;
     int target;
@@ -21,8 +19,6 @@ struct list_element{
 
 #define NITEMS 4
 
-/* Typy wiadomości */
-/* TYPY PAKIETÓW */
 #define ACK 1
 #define REQUEST 2
 #define RELEASE 3
@@ -34,8 +30,6 @@ struct list_element{
 extern MPI_Datatype MPI_PAKIET_T;
 void inicjuj_typ_pakietu();
 
-/* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty
- * pakiet), do kogo, z jakim typem */
 void sendPacket(packet_t* pkt, int destination, int tag);
 
 typedef enum {
@@ -51,7 +45,6 @@ typedef enum {
 
 extern state_t stan;
 extern pthread_mutex_t stateMut;
-/* zmiana stanu, obwarowana muteksem */
 void changeState(state_t);
 void handleRequest(packet_t);
 void handleGuideRequest(packet_t);

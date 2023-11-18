@@ -1,7 +1,0 @@
-ZADANIE:
-Zaimplementować zegary lamporta oraz dowolny algorytm dostępu do sekcji krytycznej.
-Zaimplementować wyświetlanie zegarów w makrach println oraz debug.
-
-CO JEST:
-w struct packet_t jest już pole "timestamp" - to będzie timestamp.
-Trzeba dodać zmienną clock i obwarować ją muteksami.
